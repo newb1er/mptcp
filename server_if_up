@@ -1,0 +1,12 @@
+#!/bin/bash
+
+source ./common
+NS_NAME="server"
+BR_NAME="vnet-br"
+
+add_veth 'veth-serv0' 'veth-serv0-br' "${BR_NAME}"
+add_addr 'veth-serv0' '192.168.111.1/24'
+
+# MPTCP Config
+ip -n server mptcp limits set subflow 2
+ip -n server mptcp limits set add_addr_accepted 2

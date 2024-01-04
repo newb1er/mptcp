@@ -1,0 +1,22 @@
+#!/bin/bash
+
+## Params
+#  - $1: name of dev (in namespace)
+#  - $2: name of peer (in root namespace)
+#  - $3: name of bridge
+function add_veth() {
+        ip l add "${1}" type veth peer "${2}"
+        ip l set "${1}" netns "${NS_NAME}"
+        ip l set "${2}" master "${3}"
+        ip -n "${NS_NAME}" l set "${1}" up
+        ip l set "${2}" up
+}
+
+
+## Params
+#  - $1: name of dev
+#  - $2: addr
+function add_addr() {
+        ip -n "${NS_NAME}" addr add "${2}" dev "${1}"
+}
+

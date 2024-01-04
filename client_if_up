@@ -1,0 +1,41 @@
+#!/bin/bash
+
+source ./common
+NS_NAME="client"
+BR_NAME="vnet-br"
+DEV_NUM="3"
+
+## Params
+#  - $1: name of dev
+#  - $2: tree id
+#  - $3: rate
+function set_flow_policy() {
+        tc -n "${NS_NAME}" qdisc add dev "${1}" root handle "${2}": htb default 30
+        tc -n "${NS_NAME}" class add dev "${1}" parent "${2}":0 classid "${2}":1 htb rate 100mbit
+        tc -n "${NS_NAME}" class add dev "${1}" parent "${2}":1 classid "${2}":10 htb rate "${3}"
+        tc -n "${NS_NAME}" filter add dev "${1}" parent "${2}":0 prio 1 protocol ip u32 match ip dst 0.0.0.0/0 flowid "${2}":10
+}
+
+
+## Params
+#  - $1: name of dev
+#  - $2: addr of dev
+function add_subflow_dev() {
+        ip -n "${NS_NAME}" mptcp endpoint add "${2}" dev "${1}" subflow signal
+}
+
+# MPTCP Config
+ip -n client mptcp limits set subflow $(($DEV_NUM - 1))
+ip -n client mptcp limits set add_addr_accepted $(($DEV_NUM - 1))
+add_subflow_dev 'veth-client0' '192.168.111.100'
+
+for (( i=0; i<$DEV_NUM; i++ ))
+do
+        add_veth "veth-client${i}" "veth-client${i}-br" "${BR_NAME}"
+        add_addr "veth-client${i}" "192.168.111.10${i}/24"
+        set_flow_policy "veth-client${i}" "$(($i+1))" "10mbit"
+        if [ "$i" -gt "0" ]; then
+                add_subflow_dev "veth-client${i}" "192.168.111.10${i}"
+        fi
+done
+
