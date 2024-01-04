@@ -1,6 +1,8 @@
+DEV_NUM="4"
+
 all: build
-        bash client_if_up
-        bash server_if_up
+        DEV_NUM=$(DEV_NUM) bash client_if_up
+        DEV_NUM=$(DEV_NUM) bash server_if_up
 
 build:
         ip netns add server
@@ -12,3 +14,4 @@ clean:
         ip netns del server
         ip netns del client
         ip l del vnet-br
+        DEV_NUM=$(DEV_NUM) bash dev_clean

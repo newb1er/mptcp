@@ -1,12 +1,14 @@
 #!/bin/bash
 
 source ./common
-NS_NAME="server"
-BR_NAME="vnet-br"
+NS_NAME=${NS_NAME:-"server"}
+BR_NAME=${BR_NAME:-"vnet-br"}
+SERVER_IP=${SERVER_IP:-"192.168.111.1/24"}
+DEV_NUM=${DEV_NUM:-3}
 
 add_veth 'veth-serv0' 'veth-serv0-br' "${BR_NAME}"
-add_addr 'veth-serv0' '192.168.111.1/24'
+add_addr 'veth-serv0' "${SERVER_IP}"
 
 # MPTCP Config
-ip -n server mptcp limits set subflow 2
-ip -n server mptcp limits set add_addr_accepted 2
+ip -n server mptcp limits set subflow "$((${DEV_NUM} - 1))"
+ip -n server mptcp limits set add_addr_accepted "$((${DEV_NUM} - 1))"

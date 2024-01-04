@@ -1,0 +1,12 @@
+#!/bin/bash
+
+BR_NAME=${BR_NAME:-"vnet-br"}
+DEV_NUM=${DEV_NUM:-"3"}
+
+for (( i=0; i<${DEV_NUM}; i++ ))
+do
+        ip l del "veth-client${i}-br"
+done
+
+ip l del "veth-serv0-br"
+ip l del "${BR_NAME}"

@@ -1,9 +1,9 @@
 #!/bin/bash
 
 source ./common
-NS_NAME="client"
-BR_NAME="vnet-br"
-DEV_NUM="3"
+NS_NAME=${NS_NAME:-"client"}
+BR_NAME=${BR_NAME:-"vnet-br"}
+DEV_NUM=${DEV_NUM:-"3"}
 
 ## Params
 #  - $1: name of dev
