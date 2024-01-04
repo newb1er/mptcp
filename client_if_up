@@ -27,7 +27,6 @@ function add_subflow_dev() {
 # MPTCP Config
 ip -n client mptcp limits set subflow $(($DEV_NUM - 1))
 ip -n client mptcp limits set add_addr_accepted $(($DEV_NUM - 1))
-add_subflow_dev 'veth-client0' '192.168.111.100'
 
 for (( i=0; i<$DEV_NUM; i++ ))
 do
