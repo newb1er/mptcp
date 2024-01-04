@@ -1,0 +1,6 @@
+#!/bin/bash
+
+SERVER_NS=${1:-'server'}
+PORT=${2:-'5201'}
+
+ip netns exec "${SERVER_NS}" mptcpize run iperf3 -s -p "${PORT}"

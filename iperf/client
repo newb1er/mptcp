@@ -1,0 +1,7 @@
+#!/bin/bash
+
+CLIENT_NS=${1:-"client"}
+SERVER_IP=${2:-"192.168.111.1"}
+PORT=${3:-"5201"}
+
+ip netns exec "${CLIENT_NS}" iperf3 -c "${SERVER_IP}" -p "${PORT}"
